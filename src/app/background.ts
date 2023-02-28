@@ -1,8 +1,3 @@
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    console.log("Background got a message!")
-    sendResponse({})
-})
-
 // Listen for the user to click on the extension icon
 chrome.browserAction.onClicked.addListener(() => {
     // Loop through all open tabs
@@ -61,3 +56,4 @@ chrome.browserAction.onClicked.addListener(() => {
       }
     });
   });
+  
