@@ -1,6 +1,7 @@
-document.addEventListener("DOMContentLoaded", function() {
-  var extractImagesButton = document.getElementById("extract-images-button");
-  extractImagesButton.addEventListener("click", function() {
-    chrome.runtime.sendMessage({ message: "extractImages" });
+document.addEventListener("DOMContentLoaded", () => {
+    const extractImagesButton = document.getElementById("extract-images-button");
+    extractImagesButton.addEventListener("click", () => {
+      chrome.runtime.sendMessage({ message: "extractImages" });
+    });
   });
-});
+  
