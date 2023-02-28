@@ -1,5 +1,5 @@
 // Listen for the user to click on the extension icon
-chrome.browserAction.onClicked.addListener(() => {
+chrome.browserAction.onClicked.addListener(() => { 
   // Loop through all open tabs
   chrome.tabs.query({}, (tabs) => {
     for (const tab of tabs) {
