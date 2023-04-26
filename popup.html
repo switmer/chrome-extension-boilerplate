@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://rsms.me/">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans">
+
+    <title>Image URL Copy</title>
+    <style>
+      :root { font-family: 'Inter', sans-serif; }
+      @supports (font-variation-settings: normal) {
+        :root { font-family: 'Inter var', sans-serif; }
+      }
+      body {
+        font-family: 'Inter', sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        overflow: hidden;
+        margin-top: 0px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 24px;
+        gap: 18px;
+        width: 365px;
+        background: #1C1B23;
+      }
+      #centerContainer{
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 16px 18px;
+        gap: 8px;
+        isolation: isolate;
+        background: rgb(208 206 233 / 5%);
+        border-radius: 12px;
+        align-self: stretch;
+        transition: all 0.3s ease;
+      }
+
+      #imageListContainer {
+        margin-top: 8px;
+        width: 100%;
+        position: relative;
+        border-radius: 8px;
+        display: flex;
+        flex: auto;
+        align-items: center;
+        transition: all 0.3s ease;
+      }
+    
+     
+      #imageListContainer ul {
+        list-style-type: none;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        padding: 8px;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 6px 4px;
+        gap: 10px;
+        overflow: hidden;
+        color: #e2e4ec91;
+      }
+      #imageListContainer ul li {
+        display: flex;
+        gap: 8px;
+        overflow: hidden;
+        white-space: nowrap;
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 12px;
+        line-height: 15px;
+      }
+
+      #copyButton {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        padding: 20px 0px;
+        gap: 8px;
+        background-color: #FDFB9F;
+        border-radius: 12px;
+        font-size: 16px;
+        flex:auto;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.2s ease;
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 17px;
+        color: #000000;
+      }
+
+      #copyButton:hover {
+        background-color: #E7E47C;
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+      }
+      #copyButton:active {
+        background-color: #DFDD70;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transform: translateY(1px);
+      }
+
+      #copyButton:disabled {
+        opacity: 0.5;
+        cursor: default;
+      }
+
+      #errorMessage {
+        color: red;
+        font-size: 16px;
+        margin-top: 20px;
+      }
+
+      
+      .button-container {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        padding: 0px;
+        gap: 12px;
+      }
+
+      #reloadButton {
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: all 0.2s ease;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        gap: 8px;
+        border: 1px solid #333333;
+        border-radius: 12px;
+        background: none;
+      }
+
+      #reloadButton:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+      }
+
+      #reloadButton:active {
+        background-color: rgba(255, 255, 255, 0.05);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transform: translateY(1px);
+      }
+
+      #reloadButton:disabled {
+        opacity: 0.5;
+        cursor: default;
+      }
+
+      #spinner {
+        animation: spin 1s linear infinite;
+        transition: all 0.3s ease;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      #loadingContainer svg.spinner {
+        animation: spin 1s linear infinite;
+        width: 24px;
+        height: 24px;
+        fill: #FDFB9F;
+        margin-right: 8px;
+        transition: all 0.3s ease;
+      }
+      .hidden {
+        display: none;
+      }
+
+      #title-description {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 0px;
+        gap: 2px;
+        width: 257px;
+        height: 41px;
+        flex: none;
+        order: 1;
+        flex-grow: 1;
+      }
+
+      #closeTabs {
+        background-color: transparent;
+        color: #f44336;
+        padding: 10px 20px;
+        display: flex;
+        border-radius: 10px;
+        font-size: 16px;
+        border: 1px solid #f443365e;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        flex: auto;
+        width: 100%;
+      }
+
+      #closeTabs:hover {
+        background-color: rgba(244, 67, 54, 0.1);
+        box-shadow: none;
+      }
+
+      #closeTabs:active {
+        background-color: rgba(244, 67, 54, 0.1);
+        transform: translateY(1px);
+        border: none;
+      }
+
+      #closeTabs:disabled {
+        opacity: 0.5;
+        cursor: default;
+      }
+
+      #status {
+        text-align: center;
+        flex-direction: row;
+        display: flex;
+        align-items: center;
+        flex-wrap: nowrap;
+        justify-content: center;
+        gap: 8px;
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 17px;
+        color: #FDFB9F;
+        transition: all 0.3s ease;
+      }
+      #statusContainer{
+        text-align: center;
+        flex-direction: row;
+        display: flex;
+        align-items: left;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        gap: 12px;
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 17px;
+        width: 100%;
+        color: #FDFB9F;
+        transition: all 0.3s ease;
+      }
+      #loadingContainer {
+        height: 24px;
+        width: 24px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        transition: all 0.3s ease;
+      }
+      #title {
+        display: flex;
+        flex-direction: row;
+        align-items: center   ;
+        padding: 0px;
+        gap: 10px;
+        align-self: stretch;
+      }
+      #title-text {
+        width: 257px;
+        height: 24px;
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 600;
+        font-size: 20px;
+        line-height: 24px;
+        color: #FFFFFF;
+        flex: none;
+        order: 0;
+        align-self: stretch;
+        flex-grow: 0;
+        letter-spacing: .009em;
+        
+      }
+      #description-text {
+        width: 301px;
+        height: 15px;
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 12px;
+        line-height: 15px;
+        color: #616161;
+        flex: none;
+        order: 1;
+        flex-grow: 0;
+      }
+
+      #status.hidden {
+        display: none;
+      }
+
+      .status-icon-container {
+        margin-right: 10px;
+      }
+
+      button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      button svg {
+        margin-right: 5px;
+      }
+
+      #badge {
+        display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      padding: 6px 10px;
+      background: #43424cb8;
+      border-radius: 100px;
+      font-style: normal;
+      font-weight: 500;
+      font-size: 12px;
+      line-height: 12px;
+      display: flex;
+      align-items: center;
+      letter-spacing: 0.25px;
+      color: #FDFB9F;
+      transition: all 0.3s ease;
+      }
+
+      .skeleton {
+      opacity: 0.8;
+      background: linear-gradient(90deg,rgba(140,140,87,0.08) 25%,rgba(140,140,87,0.75) 37%,rgba(140,140,87,0.08) 63%);
+      background-size: 400% 100%;
+      animation: loader-pulse 1.44s ease infinite;
+      color: transparent !important;
+      border-radius: 3px;
+      width: 100%;
+      }
+
+      @keyframes loader-pulse {
+        0% {
+          background-position: 100% 50%;
+            }
+        100% {
+          background-position: 0 50%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+  
+  <div id="title">
+    <svg width="49" height="49" viewBox="0 0 49 49" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0.547363" y="0.921692" width="48" height="48" rx="16" fill="#282828" fill-opacity="0.3"/>
+    <rect x="0.547363" y="0.921692" width="48" height="48" rx="16" fill="#FDFB9F" fill-opacity="0.1"/>
+    <path d="M33.6004 28.2251V30.715C33.6004 33.8559 31.0542 36.4022 27.9132 36.4022H18.8137C15.6727 36.4022 13.1265 33.8559 13.1265 30.715V21.6154C13.1265 18.4745 15.6727 15.9282 18.8137 15.9282H20.9623" stroke="#FDFB9F" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M24.4463 23.2432C25.7027 23.2432 26.7212 24.2617 26.7212 25.518V28.9305H24.4463H18.03H13.1265V23.2432H18.03H24.4463Z" fill="#FDFB9F" fill-opacity="0.15"/>
+    <path d="M13.1265 28.9305C15.0414 28.9305 16.1151 28.9305 18.03 28.9305M13.1265 28.9305V23.2432H18.03H24.4463C25.7027 23.2432 26.7212 24.2617 26.7212 25.518V28.9305M13.1265 28.9305H18.03M26.7212 36.0249V28.9305M18.03 28.9305H24.4463H26.7212" stroke="#FDFB9F" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M17.8309 26.0807C17.8275 26.0807 17.8253 26.083 17.8253 26.0864C17.8253 26.0898 17.8275 26.0921 17.8309 26.0921C17.8343 26.0921 17.8366 26.0898 17.8366 26.0864C17.8366 26.083 17.8343 26.0807 17.8309 26.0807" stroke="#FDFB9F" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M20.7223 26.0807C20.7189 26.0807 20.7166 26.083 20.7166 26.0864C20.7166 26.0898 20.72 26.0921 20.7223 26.0921C20.7257 26.0921 20.728 26.0898 20.728 26.0864C20.728 26.083 20.7257 26.0807 20.7223 26.0807" stroke="#FDFB9F" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M23.609 26.0807C23.6056 26.0807 23.6033 26.083 23.6033 26.0864C23.6033 26.0898 23.6056 26.0921 23.609 26.0921C23.6124 26.0921 23.6147 26.0898 23.6147 26.0864C23.6147 26.083 23.6124 26.0807 23.609 26.0807" stroke="#FDFB9F" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M36.2415 13.2869C37.7001 14.7455 37.7001 17.1105 36.2415 18.5691C34.7828 20.0278 32.4179 20.0278 30.9592 18.5691C29.5006 17.1105 29.5006 14.7455 30.9592 13.2869C32.4179 11.8282 34.7828 11.8282 36.2415 13.2869" fill="#FDFB9F" fill-opacity="0.15"/>
+    <path d="M36.2415 13.2869C37.7001 14.7455 37.7001 17.1105 36.2415 18.5691C34.7828 20.0278 32.4179 20.0278 30.9592 18.5691C29.5006 17.1105 29.5006 14.7455 30.9592 13.2869C32.4179 11.8282 34.7828 11.8282 36.2415 13.2869" stroke="#FDFB9F" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M34.2402 15.2883C34.5936 15.6416 34.5936 16.2145 34.2402 16.5679C33.8868 16.9213 33.3139 16.9213 32.9606 16.5679C32.6072 16.2145 32.6072 15.6416 32.9606 15.2883C33.3139 14.9349 33.8868 14.9349 34.2402 15.2883" fill="#FDFB9F"/>
+    <path d="M39.8255 15.928H37.3354" stroke="#FDFB9F" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M33.6005 22.1532V19.6631" stroke="#FDFB9F" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M33.6005 9.70306V12.1931" stroke="#FDFB9F" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M29.8653 15.928H27.3752" stroke="#FDFB9F" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div id="title-description">
+      <span id="title-text">Get images from tabs</span>
+      <span id="description-text">Quickly grab image files from open tabs.</span>
+    </div>
+    </div>
+    
+   
+    <div id="centerContainer">
+      <div id="statusContainer" class="statusContainer"> <div id="loadingContainer">
+        <svg id="spinner" class="spinner" viewBox="0 0 1024 1024" focusable="false" data-icon="loading" width="36px" height="36px" fill="#ffffff" aria-hidden="true">
+          <path d="M988 548c-19.9 0-36-16.1-36-36 0-59.4-11.6-117-34.6-171.3a440.45 440.45 0 00-94.3-139.9 437.71 437.71 0 00-139.9-94.3C629 83.6 571.4 72 512 72c-19.9 0-36-16.1-36-36s16.1-36 36-36c69.1 0 136.2 13.5 199.3 40.3C772.3 66 827 103 874 150c47 47 83.9 101.8 109.7 162.7 26.7 63.1 40.2 130.2 40.2 199.3.1 19.9-16 36-35.9 36z"></path>
+        </svg>
+      </div>
+      <div id="status" class="status">Finding images in open tabs...</div>  
+    </div>
+      <div id="imageListContainer">
+        <div id="imageContainer"> 
+        </div>
+      </div>
+      
+
+      
+    </div>
+    <button id="closeTabs" style="display:none;">Close Tabs</button>
+    <div class="button-container">
+      <button id="copyButton">
+        <svg id="importIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="21" y="17" width="14" height="14" rx="3" transform="rotate(180 21 17)" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M17 20C16.3604 20.6413 15.4915 21.0012 14.5857 21H6C4.34315 21 3 19.6569 3 18V9.41431C2.99879 8.50854 3.35869 7.63964 4 7" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span id="importText"> Copy to clipboard</span>
+      </button>
+      
+      <button id="reloadButton">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M6.75 8.25H3V4.5" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M7.46704 19.9238C8.36704 20.4448 9.36404 20.8138 10.426 20.9998" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M3.48206 15.1729C3.84806 16.1769 4.37806 17.0999 5.05206 17.9029" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M13.574 20.9998C14.636 20.8138 15.632 20.4448 16.533 19.9238" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M18.948 17.9029C19.622 17.0999 20.152 16.1769 20.518 15.1729" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M21 12C21 7.029 16.971 3 12 3C8.37005 3 5.24905 5.154 3.82605 8.25" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      
+    </div>
+  
+    <script src="popup.js" defer></script>
+  </body>
+</html>
